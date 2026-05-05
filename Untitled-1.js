@@ -62,7 +62,7 @@
 
         getInfo() {
             return {
-                id: 'BOOLVAREXTENSION',
+                id: 'BV',
                 name: 'Bool変数拡張',
                 blocks: [
                     {
@@ -174,21 +174,23 @@ createUI() {
             const keys = Object.keys(this.boolVariables);
             return keys.length > 0 ? keys : ['(空)'];
         }
-        
+
         setBool(args,util) { 
             if(args.variable != "(空)"){
                 this.boolVariables[args.variable] = (args.bool === 'true');
                 const data = {
-                    variable: args.variable,
-                    bool: args.bool
+                    variable: `${args.variable}`,
+                    bool: `${args.bool}`
                 };
-                Scratch.vm.runtime.startHats("BOOLVAREXTENSION_ifBool");
+                alert(JSON.stringify(data));
+                Scratch.vm.runtime.startHats("BV_ifBool", data);
             }
         }
         
         getBool(args){
-const data = this.boolVariables[args.variable] ?? false;
-return !!data; }
+            const data = this.boolVariables[args.variable] ?? false;
+            return !!data; 
+        }
         getallBool(args) { return JSON.stringify(this.boolVariables); }
         getallhatmap(args){
             return stringifyMap(dbMap);

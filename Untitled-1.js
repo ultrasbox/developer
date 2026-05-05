@@ -54,7 +54,7 @@
         }, 2); // 2スペースで 1nm 単位で見やすく整形(🖕)
     }
 
-    class MyExtension {
+    class Boolvariable {
         constructor() {
             this.boolVariables = {};
             this.isUIOpen = false;
@@ -89,8 +89,9 @@
                     },
                     {
                         opcode: 'ifBool',
-                        blockType: Scratch.BlockType.HAT, // BOOLEANブロック復活
+                        blockType: Scratch.BlockType.EVENT, // BOOLEANブロック復活
                         text: 'bool値[variable]が[bool]になった時',
+                        isEdgeActivated: false,
                         arguments: {
                             variable: { type: Scratch.ArgumentType.STRING, menu: 'boolVariableMenu' },
                             bool: { type: Scratch.ArgumentType.STRING, menu: 'staticBoolMenu' }
@@ -101,11 +102,6 @@
                         blockType: Scratch.BlockType.REPORTER,
                         text: '全部のbool値を見る',
                     },
-                    {
-                        opcode: 'getallhatmap',
-                        blockType: Scratch.BlockType.REPORTER,
-                        text: '全部のhatブロックの内部値を見る',
-                    }
                 ],
                 menus: {
                     boolVariableMenu: { acceptReporters: true, items: 'getVariableMenuItems' },
@@ -178,35 +174,26 @@ createUI() {
             const keys = Object.keys(this.boolVariables);
             return keys.length > 0 ? keys : ['(空)'];
         }
-
+``
         setBool(args,util) { 
             if(args.variable != "(空)"){
-                const blockId = util.thread.peekStack();
-                this.boolVariables[args.variable] = {"bool": (args.bool === 'true')};
-                updateValueBySpecificKey(args.variable,false)
+                this.boolVariables[args.variable] = (args.bool === 'true');
+                const data = {
+                    variable: args.variable,
+                    bool: args.bool
+                };
+                Scratch.vm.runtime.startHats("BOOLVAREXTENSION_ifBool");
             }
         }
         
         getBool(args){
-const data = this.boolVariables[args.variable] ?? {"bool": false};
-return !!data.bool; }
+const data = this.boolVariables[args.variable] ?? false;
+return !!data; }
         getallBool(args) { return JSON.stringify(this.boolVariables); }
-        ifBool(args,util){
-            const blockId = util.thread.peekStack();
-            const safeValue = dbMap.get(blockId)?.get(args.variable)?.get("hat") ?? false;
-            const preValue = dbMap.get(blockId)?.get(args.variable)?.get("bool") ?? false;
-            const bool = (args.bool == "true");
-            if(safeValue == false && !!this.boolVariables[args.variable].bool == bool && bool != preValue){
-                deleteInMap(blockId,args.variable);
-                updateInMap(blockId,args.variable,new Map([["bool",(bool)],["hat",true]]));
-                return true;
-            }
-            return false;
-        }
         getallhatmap(args){
             return stringifyMap(dbMap);
         } 
     }
 
-    Scratch.extensions.register(new MyExtension());
+    Scratch.extensions.register(new Boolvariable());
 })(Scratch);

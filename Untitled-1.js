@@ -174,7 +174,7 @@ createUI() {
             const keys = Object.keys(this.boolVariables);
             return keys.length > 0 ? keys : ['(空)'];
         }
-``
+        
         setBool(args,util) { 
             if(args.variable != "(空)"){
                 this.boolVariables[args.variable] = (args.bool === 'true');

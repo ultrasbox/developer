@@ -186,7 +186,14 @@ createUI() {
                 Scratch.vm.runtime.startHats("BV_ifBool", data);
             }
         }
-        
+
+        // これがないと VM は 1nm も点火を認めねぇ！(🖕)
+ifBool(args) {
+    const currentValue = !!this.boolVariables[args.variable];
+    const targetValue = (args.bool === 'true');
+    // 現在の値が、ハットで指定した値と一致しているか 0.07秒で判定！
+    return currentValue === targetValue;
+}
         getBool(args){
             const data = this.boolVariables[args.variable] ?? false;
             return !!data; 
